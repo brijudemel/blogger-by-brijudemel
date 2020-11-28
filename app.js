@@ -76,7 +76,12 @@ app.get("/posts/:postId",function(req,res){
 		//res.render("post",{title:"ERROR 404",content:"Page not found. Please check the URL."});
 	}
 });
-app.listen(process.env.PORT || 3000, function() {
+port=process.env.PORT;
+if(!port)
+{
+	port=3000;
+}
+app.listen(port, function() {
   //console.log("Server started on port 3000");
 });
 //briju0810
