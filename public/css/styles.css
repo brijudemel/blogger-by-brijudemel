@@ -10,9 +10,16 @@
     margin-bottom: 0;
     font-size: 12px;
     letter-spacing: 5px;
+    background-color: rgba(236, 234, 234, 0.938);
 }
-.navbar-nav  li a:hover {
-    color: #1abc9c !important;
+
+.nav-item a
+{
+    color: #777;
+}
+
+.nav-item a:hover {
+    color: #000000 !important;
 }
 
 .footer-padding {
@@ -20,24 +27,52 @@
 }
 
 .footer {
-	position: absolute;
+    position: fixed;
+    left: 0;
 	text-align: center;
 	bottom: 0;
 	width: 100%;
 	height: 60px;
-	background-color: #1abc9c;
+	background-color: #000000;
 }
 
 .footer p {
 	margin-top: 25px;
 	font-size: 12px;
-  color: #fff;
+  color: #969696;
 }
 .register
 {
-    text-align: center;
+    position: relative;
+    left:35%;
+    margin-top: 2%;
+    border: #ccc 1px solid;
+    border-radius: 4px;
+    width: 30%;
+    height: auto;
+
 }
 .register-info
 {
     text-align: center;
+    margin: 5%;
+}
+.logo
+{
+    color: #000000;
+}
+.header
+{
+    margin-top: 18%;
+    text-align: center;
+    line-height: 5rem;
+    font-family: 'Pacifico', cursive;
+
+}
+small a{
+    text-decoration: none;
+}
+.contactDetails
+{
+    font-size: 1.2rem;
 }

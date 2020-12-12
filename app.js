@@ -1,82 +1,203 @@
 //jshint esversion:6
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose=require("mongoose");
 const _ = require('lodash');
+const md5=require("md5");
 const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+const alert= require('alert');
 
-mongoose.connect("mongodb+srv://admin-briju:briju0810@cluster0.vixf2.mongodb.net/blogDB",{useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb://localhost:27017/blogSite2",{useNewUrlParser:true,useUnifiedTopology:true});
+mongoose.set("useCreateIndex",true);
 
-const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
-const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
-const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
+//mongoose.connect("mongodb+srv://admin-briju:briju0810@cluster0.vixf2.mongodb.net/blogDB",{useNewUrlParser: true, useUnifiedTopology: true });
 
+const homeStartingContent = "So here you are, to read a page of my life. I'm really glad that mine is read by you people and this makes me keep posting. So keep visiting as I update my daily activities and keep cheering. Now you may scroll down.😅";
+const aboutContent = "Blogger is software designed for everyone, emphasizing accessibility, performance, security, and ease of use. We believe great software should work with minimum set up, so you can focus on sharing your story, product, or services freely. This basic software is simple and predictable so you can easily get started. It also offers powerful features for growth and success.We believe in democratizing publishing and the freedoms that come with open source. Supporting this idea is a large community of people collaborating on and contributing to this project.";
+const contactContent = "While we're good with Managing your posts, there are simpler ways for us to get in touch and answer your questions.";
+const contactNumber="+91 1234567890";
+const contactEmail="support@blogger.com";
 
-const postsSchema={
-	title:String,
-	content:String
-};
-const Posts =mongoose.model("Posts",postsSchema);
+/////////////////////////////////////////////MODEL///////////////////////////////////////////////
+const userSchema=new mongoose.Schema({
+	firstName:String,
+	lastName:String,
+	userName:String,
+	email:String,
+	password:String,
+	posts: Array
+});
+const User=mongoose.model("User",userSchema);
 
-
+/////////////////////////////////////Home/////////////////////////////////////////////////////
 app.get("/",function(req,res){
-
-	Posts.find({}, function(err, posts){
-    
-      res.render("home", {startingContent:homeStartingContent,posts: posts});
-  
-  });
-
+	res.render("main");
 });
 
+/////////////////////////////ABOUT/////////////////////////////////////////////
 app.get("/about",function(req,res){
 	res.render("about",{startingContent:aboutContent});
 });
 
+///////////////////////////CONTACT/////////////////////////////////////////////
 app.get("/contact",function(req,res){
-	res.render("contact",{startingContent:contactContent});
+	res.render("contact",{startingContent:contactContent,contactNumber:contactNumber,contactEmail:contactEmail});
 });
 
-app.get("/compose",function(req,res){
-	res.render("compose");
-});
-
-app.post("/compose",function(req,res){
-
-	const post=new Posts({
-		title:req.body.postTitle,
-		content:req.body.postBody
-	});
-	post.save(function(err){
-		if(!err){
-			res.redirect("/");
+/////////////////////////BLOGGERS////////////////////////////////////////////
+app.get("/bloggers",function(req,res){
+	User.find({}, function(err, users){
+		if(err)
+		{
+			console.log(err);
+		}
+		else
+		{
+			res.render("bloggers",{users:users});
 		}
 	});
 	
 });
 
-app.get("/posts/:postId",function(req,res){
-	const req_id=req.params.postId;
-	let present=false;
-	//var req_id=;
-
-	Posts.findOne({_id: req_id}, function(err, post){
-		present=true;
-		res.render("post",{
-			title:post.title,
-			content:post.content
-		});
-		
-	});
-	if(present){
-		//res.render("post",{title:"ERROR 404",content:"Page not found. Please check the URL."});
-	}
+/////////////////////////////Register///////////////////////////////////////
+app.get("/register",function(req,res){
+	res.render("register");
 });
+
+app.post("/register",function(req,res)
+{
+	const uname=_.lowerCase(req.body.uname);
+	User.findOne({userName:uname},function(err,foundUser){
+		if(err)
+		{
+			console.log(err);
+		}
+		else{
+			if(foundUser)
+			{
+				alert("Username already taken. Pick another one.");
+				res.redirect("/register");
+			}
+			else{
+				const user=new User({
+					firstName:req.body.fname,
+					lastName:req.body.lname,
+					userName:uname,
+					email:req.body.email,
+					password:req.body.password,
+					posts:[]
+				});
+				user.save(function(err){
+					if(!err){
+						res.redirect("/");
+					}
+					else
+					{
+						res.redirect("/register");
+					}
+				});
+			}
+		}
+	});
+});
+
+/////////////////////////////////Login///////////////////////////////////////
+app.get("/login",function(req,res){
+	res.render("login");
+});
+
+app.post("/login",function(req,res){
+
+	User.findOne({userName:req.body.username},function(err,foundUser){
+		if(err)
+		{
+			console.log(err);
+		}
+		else
+		{
+			if(foundUser)
+			{
+				if(foundUser.password===req.body.password)
+				{
+					console.log("Password Matched");
+					const link="/"+foundUser._id+"/compose";
+					res.redirect(link);
+				}
+				else{
+					console.log("Wrong Password");
+				}
+			}
+			else
+			{
+				console.log("User not found!");
+			}
+		}
+	});
+});
+
+//////////////////////////////////////COMPOSE for users/////////////////////////////////
+app.get("/:id/compose",function(req,res){
+	res.render("compose",{id:req.params.id});
+});
+app.post("/:id/compose",function(req,res){
+
+	const title=req.body.postTitle;
+	const content=req.body.postBody;
+	const item={title:title,content:content}
+	User.findOneAndUpdate({_id:req.params.id}, {$push:{posts:item}}, {upsert: true}, function(err, doc) {
+		if (err){
+			res.render("post",{title:"ERROR 505",content:""});
+		}
+		else{
+			alert("Updated");
+		}
+	});
+	const url="/"+req.params.id+"/compose";
+	res.redirect(url);
+});
+
+////////////////////////////////////////////POSTS//////////////////////////////////////////////////
+app.get("/:username/posts",function(req,res){
+	User.findOne({userName:req.params.username},function(err,foundUser){
+		if(err)
+		{
+			console.log(err);
+		}
+		else{
+			res.render("posts", {startingContent:homeStartingContent,posts: foundUser.posts,user:req.params.username});
+		}
+	});
+});
+
+////////////////////////////////////////////////SPECIFIC POSTS///////////////////////////////////////
+app.get("/:username/posts/:index",function(req,res){
+	User.findOne({userName:req.params.username}, function(err,foundUser){
+		if(err)
+		{
+			console.log(err);
+		}
+		else{
+
+			if(foundUser)
+			{
+				const item=foundUser.posts[req.params.index];
+				res.render("post",{
+					title:item.title,
+					content:item.content
+				});
+			}
+			else{
+				res.render("post",{title:"ERROR 404",content:"Page not found. Please check the URL."});
+			}
+		}
+	});
+});
+
+//////////////////////////////////////////////////CONNECT/////////////////////////////////////////////
 port=process.env.PORT;
 if(!port)
 {

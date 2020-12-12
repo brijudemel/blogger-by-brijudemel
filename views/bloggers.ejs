@@ -1,0 +1,29 @@
+<%- include('partials/header'); %>
+	<h1>Bloggers</h1>
+	<p>Here is a list of bloggers using our platform. Click to view thier blogs.</p>
+	<br>
+    <% for(var i=0; i < users.length ;i+=2) { %>
+        <div class="row">
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <h2 class="card-title"><%=users[i].firstName %> <%=users[i].lastName %></h2>
+                  <p class="card-text">@<%=users[i].userName %></p>
+                  <a href="/<%=users[i].userName %>/posts" class="btn btn-dark">Open Blog</a>
+                </div>
+              </div>
+            </div>
+            <% if(users.length %2!=0 && i==users.length-1){ break;} %>
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <h2 class="card-title"><%=users[i+1].firstName%> <%=users[i+1].lastName %></h2>
+                  <p class="card-text">@<%=users[i+1].userName %></p>
+                  <a href="/<%=users[i+1].userName %>/posts" class="btn btn-dark">Open Blog</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <% } %>
+<%- include('partials/footer'); %>

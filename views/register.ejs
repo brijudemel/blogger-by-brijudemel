@@ -1,13 +1,19 @@
 <%- include('partials/header'); %>
 <div class="register">
     <div class="register-info">
-        <form>
-            <input type="text" placeholder="First Name" name="fname"/>
-            <input type="text" placeholder="Last Name" name="lname"/>
-            <input type="email" placeholder="Email id" />
-            <input type="password" placeholder="New Password" />
-            <input type="submit" value="Submit" name="submit" />
+        <i class="fab fa-blogger fa-9x logo"></i>
+        <h1>Sign Up</h1>
+        <form name="form" onsubmit="return validate()" action="/register" method="post">
+        	<div class="form-group"><input type="text" class="form-control" placeholder="First Name" name="fname" required/></div>
+            <div class="form-group"><input type="text" class="form-control" placeholder="Last Name" name="lname" required/></div>
+            <div class="form-group"><input type="text" class="form-control" placeholder="User Name" name="uname" required/></div>
+        	<div class="form-group"><input type="email" class="form-control" placeholder="Email id" name="email" required/></div>
+            <div class="form-group"><input type="password" class="form-control" placeholder="New Password" name="password" required/></div>
+            <br>
+            <div class="d-grid gap-2"><button type="submit" class="btn btn-dark">Sign Up</button></div>
         </form>
+        <small>Already have a account? <a href="login">Click Here</a></small>
     </div>
 </div>
+<script src="/js/validate.js"></script>
 <%- include('partials/footer'); %>
