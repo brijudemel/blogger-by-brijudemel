@@ -1,0 +1,4 @@
+function onCompose()
+{
+    alert("Posted!");
+}

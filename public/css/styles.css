@@ -12,6 +12,10 @@
     letter-spacing: 5px;
     background-color: rgba(236, 234, 234, 0.938);
 }
+.navbar-brand
+{
+    font-size: 25px;
+}
 
 .nav-item a
 {
@@ -80,4 +84,10 @@ small a{
 {
     text-align: center;
     display: inline;
+}
+.btn.nav-link
+{
+    color:rgb(209, 209, 209);
+    letter-spacing: 1px;
+    padding: 5px 7px;
 }

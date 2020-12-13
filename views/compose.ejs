@@ -1,6 +1,6 @@
 <%- include('partials/header'); %>
 	<h1>Compose</h1>
-	<form action="/<%=id%>/compose" method="post">
+	<form action="/<%=id%>/compose" method="post" onsubmit="onCompose()">
 		<div class="form-group">
 			<label for="postTitle">Title</label>
 			<input class="form-control" type="text" id="postContent" name="postTitle">
@@ -13,4 +13,5 @@
 			<button type="submit" name="button" class="btn btn-dark">Publish</button>
 		</div>
 	</form>
+	<script src="/js/compose.js"></script>
 <%- include('partials/footer'); %>
