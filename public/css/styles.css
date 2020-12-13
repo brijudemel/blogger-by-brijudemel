@@ -76,3 +76,8 @@ small a{
 {
     font-size: 1.2rem;
 }
+.userFirstPageBtns
+{
+    text-align: center;
+    display: inline;
+}
