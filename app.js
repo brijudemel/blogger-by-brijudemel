@@ -11,11 +11,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 const alert= require('alert');
 
-mongoose.connect("mongodb://localhost:27017/blogSite2",{useNewUrlParser:true,useUnifiedTopology:true});
+//mongoose.connect("mongodb://localhost:27017/blogSite2",{useNewUrlParser:true,useUnifiedTopology:true});
+
+
+mongoose.connect("mongodb+srv://admin-briju:briju0810@cluster0.vixf2.mongodb.net/blogger",{useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.set("useCreateIndex",true);
-
-//mongoose.connect("mongodb+srv://admin-briju:briju0810@cluster0.vixf2.mongodb.net/blogDB",{useNewUrlParser: true, useUnifiedTopology: true });
-
 const homeStartingContent = "So here you are, to read a page of my life. I'm really glad that mine is read by you people and this makes me keep posting. So keep visiting as I update my daily activities and keep cheering. Now you may scroll down.😅";
 const aboutContent = "Blogger is software designed for everyone, emphasizing accessibility, performance, security, and ease of use. We believe great software should work with minimum set up, so you can focus on sharing your story, product, or services freely. This basic software is simple and predictable so you can easily get started. It also offers powerful features for growth and success.We believe in democratizing publishing and the freedoms that come with open source. Supporting this idea is a large community of people collaborating on and contributing to this project.";
 const contactContent = "While we're good with Managing your posts, there are simpler ways for us to get in touch and answer your questions.";
@@ -88,12 +88,15 @@ app.post("/register",function(req,res)
 					lastName:req.body.lname,
 					userName:uname,
 					email:req.body.email,
-					password:req.body.password,
+					password:md5(req.body.password),
 					posts:[]
 				});
 				user.save(function(err){
 					if(!err){
-						res.redirect("/");
+						User.findOne({userName:uname},function(err,foundUser){
+							const url ="/"+foundUser._id+"/compose";
+							res.redirect(url);
+						});
 					}
 					else
 					{
@@ -121,7 +124,7 @@ app.post("/login",function(req,res){
 		{
 			if(foundUser)
 			{
-				if(foundUser.password===req.body.password)
+				if(foundUser.password===md5(req.body.password))
 				{
 					console.log("Password Matched");
 					const link="/"+foundUser._id+"/compose";
