@@ -91,3 +91,6 @@ small a{
     letter-spacing: 1px;
     padding: 5px 7px;
 }
+.header a{
+    font-family: Arial;
+}
